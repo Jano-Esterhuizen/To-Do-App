@@ -17,12 +17,12 @@ const Login = () => {
     if (!validateEmail(email)) {
       setError("Please enter a valid email");
       return;
-  }
+    }
 
-  if (!password) {
-    setError("Please enter your password");
-    return;
-  }
+    if (!password) {
+      setError("Please enter your password");
+      return;
+    }
 
   setError(null);
 
