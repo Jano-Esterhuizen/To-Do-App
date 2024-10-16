@@ -3,7 +3,7 @@ import TagInput from "../../components/Input/TagInput";
 import { MdClose } from "react-icons/md";
 import axiosInstance from "../../utils/axiosInstance";
 
-const AddEditNotes = ({ noteData, type, getAllNotes, onClose }) => {
+const AddEditNotes = ({ noteData, type, getAllNotes, onClose, showToastMessage }) => {
 
     const [title, setTitle] = useState(noteData?.title || "");
     const [content, setContent] = useState(noteData?.content || "");
@@ -14,28 +14,29 @@ const AddEditNotes = ({ noteData, type, getAllNotes, onClose }) => {
     // Add Note
     const addNewNote = async () => {
         try {
-          const response = await axiosInstance.post("/add-note", {
-            title,
-            content,
-            tags,
-          });
-    
-          if (response.data && response.data.note) {
-            getAllNotes();
-            onClose();
-          }
+            const response = await axiosInstance.post("/add-note", {
+                title,
+                content,
+                tags,
+            });
+
+            if (response.data && response.data.note) {
+                showToastMessage("Note Added Successfully");
+                getAllNotes();
+                onClose();
+            }
         } catch (error) {
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.message
-          ) {
-            setError(error.response.data.message);
-          } else {
-            setError("An unexpected error occurred. Please try again.");
-          }
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.message
+            ) {
+                setError(error.response.data.message);
+            } else {
+                setError("An unexpected error occurred. Please try again.");
+            }
         }
-      };
+    };
 
     // Edit Note
     const editNote = async () => {
@@ -43,26 +44,27 @@ const AddEditNotes = ({ noteData, type, getAllNotes, onClose }) => {
         const noteId = noteData._id;
         try {
             const response = await axiosInstance.put("/edit-note/" + noteId, {
-              title,
-              content,
-              tags,
+                title,
+                content,
+                tags,
             });
-      
+
             if (response.data && response.data.note) {
-              getAllNotes();
-              onClose();
+                showToastMessage("Note Updated Successfully");
+                getAllNotes();
+                onClose();
             }
-          } catch (error) {
+        } catch (error) {
             if (
-              error.response &&
-              error.response.data &&
-              error.response.data.message
+                error.response &&
+                error.response.data &&
+                error.response.data.message
             ) {
-              setError(error.response.data.message);
+                setError(error.response.data.message);
             } else {
-              setError("An unexpected error occurred. Please try again.");
+                setError("An unexpected error occurred. Please try again.");
             }
-          }
+        }
     };
 
     const handleAddNote = () => {
@@ -93,7 +95,7 @@ const AddEditNotes = ({ noteData, type, getAllNotes, onClose }) => {
             >
                 <MdClose className="text-xl text-slate-400" />
             </button>
-            
+
             <div className="flex flex-col gap-2">
                 <label className="input-label">TITLE</label>
                 <input
