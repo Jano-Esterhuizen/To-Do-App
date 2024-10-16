@@ -15,6 +15,7 @@ const Home = () => {
     data: null,
   });
 
+  const [allNotes, setAllNotes] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
 
   const navigate = useNavigate();
@@ -34,9 +35,23 @@ const Home = () => {
     }
   };
 
+  // Get All Notes
+  const getAllNotes = async () => {
+    try {
+      const response = await axiosInstance.get("/get-all-notes");
+
+      if (response.data && response.data.notes) {
+        setAllNotes(response.data.notes);
+      }
+    } catch (error) {
+      console.log("An unexpected error occurred. Please try again.");
+    }
+  };
+
   useEffect(() => {
+    getAllNotes();
     getUserInfo();
-    return () => {};
+    return () => { };
   }, []);
 
 
@@ -47,28 +62,31 @@ const Home = () => {
       <div className='container mx-auto'>
         <div className='grid grid-cols-3 gap-4 mt-8'>
 
-          <NoteCard
-            title="meeting"
-            date="10/10/2022"
-            content="content"
-            tags={['tag1', 'tag2']}
-            isPinned={false}
+          {allNotes.map((item, index) => (
+            <NoteCard
+            key={item._id}
+            title={item.title}
+            date={item.createdOn}
+            content={item.content}
+            tags={item.tags}
+            isPinned={item.isPinned}
             onEdit={() => { }}
             onDelete={() => { }}
             onPinNote={() => { }}
           />
+          ))}
 
         </div>
       </div>
 
-      <button className='w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute bottom-5 right-5 ' 
-      onClick={() => {
-        setOpenAddEditModal({
-          isShown: true,
-          type: "add",
-          data: null,
-        });
-      }}>
+      <button className='w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute bottom-5 right-5 '
+        onClick={() => {
+          setOpenAddEditModal({
+            isShown: true,
+            type: "add",
+            data: null,
+          });
+        }}>
 
         <MdAdd className='text-[32px] text-white' />
       </button>
@@ -85,9 +103,9 @@ const Home = () => {
         className="w-[40%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-5 overflow-scroll"
       >
         <AddEditNotes
-        type={openAddEditModal.type}
-        noteData={openAddEditModal.data}
-        onClose={() => setOpenAddEditModal({isShown: false, type: "add", data: null})} />
+          type={openAddEditModal.type}
+          noteData={openAddEditModal.data}
+          onClose={() => setOpenAddEditModal({ isShown: false, type: "add", data: null })} />
       </Modal>
 
     </>
