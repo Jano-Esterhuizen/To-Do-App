@@ -48,6 +48,8 @@ const Home = () => {
     }
   };
 
+
+
   useEffect(() => {
     getAllNotes();
     getUserInfo();
@@ -105,7 +107,10 @@ const Home = () => {
         <AddEditNotes
           type={openAddEditModal.type}
           noteData={openAddEditModal.data}
-          onClose={() => setOpenAddEditModal({ isShown: false, type: "add", data: null })} />
+          onClose={() => setOpenAddEditModal({ isShown: false, type: "add", data: null })} 
+          
+          getAllNotes={getAllNotes}
+        />
       </Modal>
 
     </>
