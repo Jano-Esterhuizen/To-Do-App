@@ -7,6 +7,8 @@ import Modal from 'react-modal';
 import axiosInstance from '../../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../../components/ToastMessage/Toast';
+import EmptyCard from '../../components/EmptyCard/EmptyCard';
+import AddNotesImg from '../../assets/images/add-notes.svg';
 
 const Home = () => {
 
@@ -89,18 +91,19 @@ const Home = () => {
     }
   };
 
-    useEffect(() => {
-      getAllNotes();
-      getUserInfo();
-      return () => { };
-    }, []);
+  useEffect(() => {
+    getAllNotes();
+    getUserInfo();
+    return () => { };
+  }, []);
 
 
-    return (
-      <>
-        <NavBar userInfo={userInfo} />
+  return (
+    <>
+      <NavBar userInfo={userInfo} />
 
-        <div className='container mx-auto'>
+      <div className='container mx-auto'>
+        {allNotes.length > 0 ? (
           <div className='grid grid-cols-3 gap-4 mt-8'>
 
             {allNotes.map((item, index) => (
@@ -117,51 +120,55 @@ const Home = () => {
               />
             ))}
 
-          </div>
-        </div>
+          </div>) : (<EmptyCard imgSrc={AddNotesImg} message={`Start creating your first note! Click the 'Add' button to jot down your
+          thoughts, ideas, and reminders. Let's get started!`
+            }
+          />)
+        }
+      </div>
 
-        <button className='w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute bottom-5 right-5 '
-          onClick={() => {
-            setOpenAddEditModal({
-              isShown: true,
-              type: "add",
-              data: null,
-            });
-          }}>
+      <button className='w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute bottom-5 right-5 '
+        onClick={() => {
+          setOpenAddEditModal({
+            isShown: true,
+            type: "add",
+            data: null,
+          });
+        }}>
 
-          <MdAdd className='text-[32px] text-white' />
-        </button>
+        <MdAdd className='text-[32px] text-white' />
+      </button>
 
-        <Modal
-          isOpen={openAddEditModal.isShown}
-          onRequestClose={() => { }}
-          style={{
-            overlay: {
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
-            },
-          }}
-          contentLabel=""
-          className="w-[40%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-5 overflow-scroll"
-        >
-          <AddEditNotes
-            type={openAddEditModal.type}
-            noteData={openAddEditModal.data}
-            onClose={() => setOpenAddEditModal({ isShown: false, type: "add", data: null })}
+      <Modal
+        isOpen={openAddEditModal.isShown}
+        onRequestClose={() => { }}
+        style={{
+          overlay: {
+            backgroundColor: "rgba(0, 0, 0, 0.2)",
+          },
+        }}
+        contentLabel=""
+        className="w-[40%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-5 overflow-scroll"
+      >
+        <AddEditNotes
+          type={openAddEditModal.type}
+          noteData={openAddEditModal.data}
+          onClose={() => setOpenAddEditModal({ isShown: false, type: "add", data: null })}
 
-            getAllNotes={getAllNotes}
-            showToastMessage={showToastMessage}
-          />
-        </Modal>
-
-        <Toast
-          isShown={showToastMsg.isShown}
-          message={showToastMsg.message}
-          type={showToastMsg.type}
-          onClose={handleCloseToast}
+          getAllNotes={getAllNotes}
+          showToastMessage={showToastMessage}
         />
+      </Modal>
 
-      </>
-    );
-  };
+      <Toast
+        isShown={showToastMsg.isShown}
+        message={showToastMsg.message}
+        type={showToastMsg.type}
+        onClose={handleCloseToast}
+      />
 
-  export default Home
+    </>
+  );
+};
+
+export default Home
