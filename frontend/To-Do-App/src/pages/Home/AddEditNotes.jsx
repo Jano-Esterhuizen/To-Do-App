@@ -5,9 +5,10 @@ import axiosInstance from "../../utils/axiosInstance";
 
 const AddEditNotes = ({ noteData, type, getAllNotes, onClose }) => {
 
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const [tags, setTags] = useState([]);
+    const [title, setTitle] = useState(noteData?.title || "");
+    const [content, setContent] = useState(noteData?.content || "");
+    const [tags, setTags] = useState(noteData?.tags || []);
+
     const [error, setError] = useState(null);
 
     // Add Note
@@ -37,7 +38,32 @@ const AddEditNotes = ({ noteData, type, getAllNotes, onClose }) => {
       };
 
     // Edit Note
-    const editNote = async () => {};
+    const editNote = async () => {
+
+        const noteId = noteData._id;
+        try {
+            const response = await axiosInstance.put("/edit-note/" + noteId, {
+              title,
+              content,
+              tags,
+            });
+      
+            if (response.data && response.data.note) {
+              getAllNotes();
+              onClose();
+            }
+          } catch (error) {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.message
+            ) {
+              setError(error.response.data.message);
+            } else {
+              setError("An unexpected error occurred. Please try again.");
+            }
+          }
+    };
 
     const handleAddNote = () => {
         if (!title) {
@@ -99,7 +125,7 @@ const AddEditNotes = ({ noteData, type, getAllNotes, onClose }) => {
             )}
 
             <button className="btn-primary font-medium mt-5 p-3" onClick={handleAddNote}>
-                ADD
+                {type === 'edit' ? "UPDATE" : "ADD"}
             </button>
 
         </div>
