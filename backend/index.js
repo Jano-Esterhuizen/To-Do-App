@@ -5,7 +5,8 @@ const mongoose = require("mongoose");
 
 mongoose.connect(config.connectionString)
 
-const User = require("./models/user.models");
+const User = require("./models/user.model");
+const Note = require("./models/note.model");
 
 const express = require("express");
 const cors = require("cors");
@@ -26,7 +27,7 @@ app.get("/", (req, res) => {
   res.json({ data: "hello" });
 });
 
-//create account
+// Create account
 app.post("/create-account", async (req, res) => {
 
   const { fullName, email, password } = req.body;
@@ -67,7 +68,7 @@ app.post("/create-account", async (req, res) => {
 
 });
 
-//login
+// Login
 app.post("/login", async (req, res) => {
   
   const { email, password } = req.body;
@@ -101,6 +102,44 @@ app.post("/login", async (req, res) => {
 
   } else {
     return res.status(400).json({ error: true, message: "Invalid credentials" });
+  }
+
+});
+
+// Add Note
+app.post("/add-note", authenticateToken, (req, res) => {
+  const { title, content, tags } = req.body;
+  const { user } = req.user;
+  
+  if (!title) {
+    return res.status(400).json({ error: true, message: "Please enter a title" });
+  } 
+
+  if (!content) {
+    return res.status(404).json({ error: true, message: "Please enter a content" });
+  }
+
+  try {
+    const note = new Note({
+      userId: user._id,
+      title: title,
+      content: content,
+      tags: tags || []
+    });
+  
+    note.save();
+  
+    return res.json({ 
+      error: false, 
+      note: note,
+      message: "Note added successfully" 
+    });
+    
+  } catch (error) {
+    return res.status(500).json({ 
+      error: true, 
+      message: "Internal server error" 
+    });
   }
   
 });
