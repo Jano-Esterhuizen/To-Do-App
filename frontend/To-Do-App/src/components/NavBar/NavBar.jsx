@@ -3,7 +3,7 @@ import ProfileInfo from '../Cards/ProfileInfo';
 import { useNavigate } from 'react-router-dom';
 import { SearchBar } from '../SearchBar/SearchBar';
 
-const NavBar = ({ userInfo }) => {
+const NavBar = ({ userInfo, onSearchNote, handleClearSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
@@ -13,10 +13,14 @@ const NavBar = ({ userInfo }) => {
   };
 
   const handleSearch = () => {
+    if(searchQuery){
+      onSearchNote(searchQuery)
+    }
   };
 
   const onClearSearch = () => {
     setSearchQuery("");
+    handleClearSearch();
   };
 
   

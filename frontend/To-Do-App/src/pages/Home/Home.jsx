@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Toast from '../../components/ToastMessage/Toast';
 import EmptyCard from '../../components/EmptyCard/EmptyCard';
 import AddNotesImg from '../../assets/images/add-notes.svg';
+import NoDataImg from '../../assets/images/no-data.svg';
 
 const Home = () => {
 
@@ -26,6 +27,8 @@ const Home = () => {
 
   const [allNotes, setAllNotes] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
+
+  const [isSearch, setIsSearch] = useState(false);
 
   const navigate = useNavigate();
 
@@ -91,6 +94,27 @@ const Home = () => {
     }
   };
 
+  // Search for a Note
+  const onSearchNote = async (query) => {
+    try {
+      const response = await axiosInstance.get("/search-notes", {
+        params: { query },
+      });
+
+      if (response.data && response.data.notes) {
+        setIsSearch(true);
+        setAllNotes(response.data.notes);
+      }
+    } catch (error) {
+      console.log("An unexpected error occurred. Please try again.");
+    }
+  };
+
+  const handleClearSearch = () => {
+    setIsSearch(false);
+    getAllNotes();
+  };
+
   useEffect(() => {
     getAllNotes();
     getUserInfo();
@@ -100,7 +124,7 @@ const Home = () => {
 
   return (
     <>
-      <NavBar userInfo={userInfo} />
+      <NavBar userInfo={userInfo} onSearchNote={onSearchNote} handleClearSearch={handleClearSearch} />
 
       <div className='container mx-auto'>
         {allNotes.length > 0 ? (
@@ -120,7 +144,11 @@ const Home = () => {
               />
             ))}
 
-          </div>) : (<EmptyCard imgSrc={AddNotesImg} message={`Start creating your first note! Click the 'Add' button to jot down your
+          </div>) : (<EmptyCard imgSrc={isSearch ? NoDataImg : AddNotesImg}
+            message={
+              isSearch
+                ? `Oops! No notes found matching your search.`
+                : `Start creating your first note! Click the 'Add' button to jot down your
           thoughts, ideas, and reminders. Let's get started!`
             }
           />)
