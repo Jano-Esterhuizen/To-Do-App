@@ -16,6 +16,12 @@ const { authenticateToken } = require("./utilities");
 
 app.use(express.json());
 
+// app.use(cors({
+//   origin: "http://localhost:5173",  // Allow requests from this origin
+//   methods: "GET,POST,PUT,DELETE",    // Allowed methods
+//   credentials: true,                 // Allow cookies and credentials
+// }));
+
 app.use(
   cors({
     origin: "*",
@@ -287,6 +293,8 @@ app.put("/update-note-pinned/:noteId", authenticateToken, async (req, res) => {
 
 
 
-app.listen(8000);
+app.listen(8000, () => {
+  console.log("Backend server is running on port 8080");
+});
 
 module.exports = app;
