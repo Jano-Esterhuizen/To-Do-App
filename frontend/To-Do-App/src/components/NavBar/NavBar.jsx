@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {SearchBar} from "../SearchBar/SearchBar";
 import ProfileInfo from "../Cards/ProfileInfo";
 import { useNavigate } from "react-router-dom";
+import Logo from "../../assets/images/logo.png";
 
 const Navbar = ({ userInfo, onSearchNote, handleClearSearch }) => {
   const isToken = localStorage.getItem("token");
@@ -28,7 +29,11 @@ const Navbar = ({ userInfo, onSearchNote, handleClearSearch }) => {
 
   return (
     <div className="bg-white flex items-center justify-between px-6 py-2 drop-shadow">
-      <h2 className="text-xl font-medium text-black py-2">Notes</h2>
+      <div className="flex justify-center">
+      <img src={Logo} alt="Logo" className="h-12 w-12 " />
+      <h2 className="text-xl font-medium text-black py-3">ToDoloo</h2>
+      </div>
+      
 
       {isToken && (
         <>
